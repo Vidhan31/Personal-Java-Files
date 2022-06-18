@@ -13,7 +13,7 @@ interface CRUDOperations {
 
     boolean insertStudentData(Student studentObject) throws Exception;
 
-    boolean updateStudentData(Student studentObject) throws Exception;
+    boolean updateStudentData() throws Exception;
 
     boolean deleteStudentData(Student studentObject) throws Exception;
 
@@ -22,7 +22,7 @@ interface CRUDOperations {
 
 class StudentDAO implements CRUDOperations {
 
-    Connection connect = null;
+    Connection connect;
 
     public StudentDAO(Connection connect) {
         this.connect = connect;
@@ -64,7 +64,7 @@ class StudentDAO implements CRUDOperations {
 
             case 3:
                 try {
-                    if (this.updateStudentData(new Student())) {
+                    if (this.updateStudentData()) {
                         System.out.println("Updated data successfully.");
                     }
                 } catch (Exception e) {
@@ -110,12 +110,14 @@ class StudentDAO implements CRUDOperations {
     }
 
     @Override
-    public boolean updateStudentData(Student studentObject) throws Exception {
+    public boolean updateStudentData() throws Exception {
+
+        Student studentObject = new Student();
 
         BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
         System.out.println("Enter student name : ");
         studentObject.setStudentName(input.readLine());
-        System.out.println("Enter student roll number : ");
+        System.out.println("Enter student roll number :");
         studentObject.setStudentRollNo(Integer.parseInt(input.readLine()));
         input.close();
 
@@ -187,9 +189,9 @@ class Student { //POJO class
 
 class ManageDatabaseConnection {
 
-    Connection connect = null;
+    Connection connect;
 
-    public Connection getConnection() throws Exception {
+    public Connection getConnection() {
 
         String URL = "jdbc:mysql://localhost:3306/student";
         String username = "root";
@@ -209,7 +211,7 @@ public class DAOPattern {
 
     public static void main(String[] args) {
 
-        CRUDOperations object = null;
+        CRUDOperations object;
 
         try {
             object = new StudentDAO(new ManageDatabaseConnection().getConnection());
