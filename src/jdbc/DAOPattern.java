@@ -13,7 +13,7 @@ interface CRUDOperations {
 
     boolean insertStudentData(Student studentObject) throws Exception;
 
-    boolean updateStudentData(Student studentObject) throws Exception;
+    boolean updateStudentData() throws Exception;
 
     boolean deleteStudentData(Student studentObject) throws Exception;
 
@@ -64,7 +64,7 @@ class StudentDAO implements CRUDOperations {
 
             case 3:
                 try {
-                    if (this.updateStudentData(new Student())) {
+                    if (this.updateStudentData()) {
                         System.out.println("Updated data successfully.");
                     }
                 } catch (Exception e) {
@@ -110,12 +110,14 @@ class StudentDAO implements CRUDOperations {
     }
 
     @Override
-    public boolean updateStudentData(Student studentObject) throws Exception {
+    public boolean updateStudentData() throws Exception {
+
+        Student studentObject = new Student();
 
         BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
         System.out.println("Enter student name : ");
         studentObject.setStudentName(input.readLine());
-        System.out.println("Enter student roll number : ");
+        System.out.println("Enter student roll number :");
         studentObject.setStudentRollNo(Integer.parseInt(input.readLine()));
         input.close();
 
