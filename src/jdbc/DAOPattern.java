@@ -22,7 +22,7 @@ interface CRUDOperations {
 
 class StudentDAO implements CRUDOperations {
 
-    Connection connect = null;
+    Connection connect;
 
     public StudentDAO(Connection connect) {
         this.connect = connect;
@@ -189,9 +189,9 @@ class Student { //POJO class
 
 class ManageDatabaseConnection {
 
-    Connection connect = null;
+    Connection connect;
 
-    public Connection getConnection() throws Exception {
+    public Connection getConnection() {
 
         String URL = "jdbc:mysql://localhost:3306/student";
         String username = "root";
@@ -211,7 +211,7 @@ public class DAOPattern {
 
     public static void main(String[] args) {
 
-        CRUDOperations object = null;
+        CRUDOperations object;
 
         try {
             object = new StudentDAO(new ManageDatabaseConnection().getConnection());
