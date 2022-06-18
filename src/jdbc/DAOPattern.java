@@ -33,7 +33,7 @@ class StudentDAO implements CRUDOperations {
         BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
         int choice;
         System.out.println("Operations");
-        System.out.println("1. Insert \n2. Display \n3. Update \n4. Delet");
+        System.out.println("1. Insert \n2. Display \n3. Update \n4. Delete ");
         System.out.println("Enter your choice : ");
 
         try {
