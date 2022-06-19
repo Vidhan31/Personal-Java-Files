@@ -9,16 +9,19 @@ Conventions :
 
 package Generics;
 
-class JavaGenerics<T> {
+class JavaGenerics<T, U> {
 
     T varX;
+    U varY;
 
-    public JavaGenerics(T varX) {
+    public JavaGenerics(T varX, U varY) {
         this.varX = varX;
+        this.varY = varY;
     }
 
     public void printValues() {
-        System.out.println("Value : " + varX);
+        System.out.println("Value X: " + varX);
+        System.out.println("Value Y: " + varY);
     }
 }
 
@@ -45,16 +48,16 @@ public class Main {
 
         //argument passed to the type parameter must be a reference type. primitive arrays are allowed
         // as they themselves are reference types.
-        JavaGenerics<Integer> genObj1 = new JavaGenerics<>(34);
+        JavaGenerics<Integer, String> genObj1 = new JavaGenerics<>(34, "String");
         genObj1.printValues();
 
         //Type safety: Specifying the type beforehand helps us locate the problem at compile time rather than runtime.
         //here <T> or <Double> is a bound.
-        JavaGenerics<Double> genObj2 = new JavaGenerics<>(33.43223423);
+        JavaGenerics<Double, Integer> genObj2 = new JavaGenerics<>(33.43223423, 123);
         genObj2.printValues();
 
         //elements individual type casting
-        JavaGenerics<String> genObj3 = new JavaGenerics<>("Generics!");
+        JavaGenerics<String, String> genObj3 = new JavaGenerics<>("Generics!", "in Java");
         genObj3.printValues();
         genericMethod("Hello generic method!"); //Even if all above are of Type T, that doesn't mean genObj1 = genObj2 = genObj3.
         //They are still different types of T. They are different references.
