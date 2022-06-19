@@ -23,8 +23,10 @@ class JavaGenerics<T> {
 }
 
 class SpecializedGenericTypes<T extends Animal> {
-    //class SpecializedGenericTypes<T extends Animal> -> makes only Animal available in the class
+    //class SpecializedGenericTypes<T extends Dog> -> gives error if you pass anything other than Dog even animal.
 
+    // class SpecializedGenericTypes<T extends Animal & Serializable>
+    //In case you implementing interfaces, use & between. order should be interface after class.
     T species;
 
     public SpecializedGenericTypes(T species) {
