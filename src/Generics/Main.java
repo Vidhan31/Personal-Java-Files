@@ -40,6 +40,10 @@ class SpecializedGenericTypes<T extends Animal> {
         species.makeNoise();
     }
 
+    public T returnObject() { // return type T object
+        return species;
+    }
+
 }
 
 public class Main {
@@ -68,6 +72,10 @@ public class Main {
         animal.printObject(); //prints Animal methods even if overridden
         SpecializedGenericTypes<Dog> dog = new SpecializedGenericTypes<>(new Dog());
         dog.printObject(); //print dog methods as it is subclass of animal
+
+        //you can return type T object too
+        SpecializedGenericTypes<Animal> obj = new SpecializedGenericTypes<>(new Animal());
+        System.out.println("Returned object : " + obj.returnObject().toString());
     }
 
     public static <T> void genericMethod(T varY) {
