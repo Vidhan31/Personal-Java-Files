@@ -93,74 +93,103 @@ class StudentDAO implements CRUDOperations {
     @Override
     public boolean insertStudentData(Student studentObject) throws Exception {
 
-        BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
-        System.out.println("Enter student name : ");
-        studentObject.setStudentName(input.readLine());
-        System.out.println("Enter student roll number : ");
-        studentObject.setStudentRollNo(Integer.parseInt(input.readLine()));
-        input.close();
+        try (BufferedReader input = new BufferedReader(new InputStreamReader(System.in))) {
+            System.out.println("Enter student name : ");
+            studentObject.setStudentName(input.readLine());
+            System.out.println("Enter student roll number : ");
+            studentObject.setStudentRollNo(Integer.parseInt(input.readLine()));
+        } catch (NumberFormatException e) {
+            throw new RuntimeException(e);
+        }
 
-        PreparedStatement query = connect.prepareStatement("INSERT INTO student_info VALUES (?,?, NULL)");
-        query.setString(1, studentObject.getStudentName());
-        query.setInt(2, studentObject.getStudentRollNo());
-        int rowsAffected = query.executeUpdate();
-        query.close();
-        connect.close();
-        return rowsAffected >= 1;
+        try {
+            PreparedStatement query = connect.prepareStatement("INSERT INTO student_info VALUES (?,?, NULL)");
+            query.setString(1, studentObject.getStudentName());
+            query.setInt(2, studentObject.getStudentRollNo());
+            int rowsAffected = query.executeUpdate();
+            query.close();
+            return rowsAffected >= 1;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            connect.close();
+        }
     }
 
     @Override
-    public boolean updateStudentData() throws Exception {
+    public boolean updateStudentData() throws Exception { //tried diff approach than other methods.
 
         Student studentObject = new Student();
 
-        BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
-        System.out.println("Enter student name : ");
-        studentObject.setStudentName(input.readLine());
-        System.out.println("Enter student roll number :");
-        studentObject.setStudentRollNo(Integer.parseInt(input.readLine()));
-        input.close();
+        try (BufferedReader input = new BufferedReader(new InputStreamReader(System.in))) {
+            System.out.println("Enter student name : ");
+            studentObject.setStudentName(input.readLine());
+            System.out.println("Enter student roll number :");
+            studentObject.setStudentRollNo(Integer.parseInt(input.readLine()));
+        } catch (NumberFormatException e) {
+            throw new RuntimeException(e);
+        }
 
-        PreparedStatement query = connect.prepareStatement("UPDATE student_info SET stud_name = ? WHERE stud_roll = ?");
-        query.setString(1, studentObject.getStudentName());
-        query.setInt(2, studentObject.getStudentRollNo());
-        int rowsAffected = query.executeUpdate();
-        query.close();
-        connect.close();
-        return rowsAffected >= 1;
+        try {
+            PreparedStatement query = connect.prepareStatement("UPDATE student_info SET stud_name = ? WHERE stud_roll = ?");
+            query.setString(1, studentObject.getStudentName());
+            query.setInt(2, studentObject.getStudentRollNo());
+            int rowsAffected = query.executeUpdate();
+            query.close();
+            return rowsAffected >= 1;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            connect.close();
+        }
     }
 
     @Override
     public boolean deleteStudentData(Student studentObject) throws Exception {
 
-        BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
-        System.out.println("Enter student roll number : ");
-        studentObject.setStudentRollNo(Integer.parseInt(input.readLine()));
-        input.close();
+        try (BufferedReader input = new BufferedReader(new InputStreamReader(System.in))) {
+            System.out.println("Enter student roll number : ");
+            studentObject.setStudentRollNo(Integer.parseInt(input.readLine()));
+        } catch (NumberFormatException e) {
+            throw new RuntimeException(e);
+        }
 
-        PreparedStatement query = connect.prepareStatement("DELETE FROM student_info WHERE stud_roll = ?");
-        query.setInt(1, studentObject.getStudentRollNo());
-        int rowsAffected = query.executeUpdate();
-        query.close();
-        connect.close();
-        return rowsAffected >= 1;
+        try {
+            PreparedStatement query = connect.prepareStatement("DELETE FROM student_info WHERE stud_roll = ?");
+            query.setInt(1, studentObject.getStudentRollNo());
+            int rowsAffected = query.executeUpdate();
+            query.close();
+            return rowsAffected >= 1;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            connect.close();
+        }
     }
 
     @Override
     public void displayStudentData() throws Exception {
 
-        PreparedStatement query = connect.prepareStatement("SELECT * FROM student_info");
-        ResultSet result = query.executeQuery();
-        while (result.next()) {
-            //used to get information about the types and properties of the columns in a ResultSet object.
-            ResultSetMetaData rsMeta = result.getMetaData();
-            int columnNumbers = rsMeta.getColumnCount();
-            for (int i = 1; i <= columnNumbers; i++) {
-                System.out.print(result.getString(i) + " ");
+        ResultSet result = null;
+        PreparedStatement query = null;
+        try {
+            query = connect.prepareStatement("SELECT * FROM student_info");
+            result = query.executeQuery();
+            while (result.next()) {
+                //used to get information about the types and properties of the columns in a ResultSet object.
+                ResultSetMetaData rsMeta = result.getMetaData();
+                int columnNumbers = rsMeta.getColumnCount();
+                for (int i = 1; i <= columnNumbers; i++) {
+                    System.out.print(result.getString(i) + " ");
+                }
+                System.out.println("\n");
             }
-            System.out.println("\n");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            assert result != null;
+            result.close();
         }
-        result.close();
         connect.close();
     }
 }
