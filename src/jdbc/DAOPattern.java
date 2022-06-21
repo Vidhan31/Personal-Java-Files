@@ -102,18 +102,16 @@ class StudentDAO implements DatabaseOperations {
             throw new RuntimeException(e);
         }
 
-        try {
-            PreparedStatement query = connect.prepareStatement("INSERT INTO student_info VALUES (?,?, NULL)");
-            query.setString(1, studentObject.getStudentName());
-            query.setInt(2, studentObject.getStudentRollNo());
-            int rowsAffected = query.executeUpdate();
-            query.close();
-            return rowsAffected >= 1;
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+        String insertQuery = "INSERT INTO student_info VALUES (?,?, NULL)";
+        int rowsAffected;
+        try (PreparedStatement pst = connect.prepareStatement(insertQuery, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
+            pst.setString(1, studentObject.getStudentName());
+            pst.setInt(2, studentObject.getStudentRollNo());
+            rowsAffected = pst.executeUpdate();
         } finally {
             connect.close();
         }
+        return rowsAffected >= 1;
     }
 
     @Override
@@ -130,18 +128,16 @@ class StudentDAO implements DatabaseOperations {
             throw new RuntimeException(e);
         }
 
-        try {
-            PreparedStatement query = connect.prepareStatement("UPDATE student_info SET stud_name = ? WHERE stud_roll = ?");
+        int rowsAffected;
+        try (PreparedStatement query = connect.prepareStatement("UPDATE student_info SET stud_name = ? WHERE stud_roll = ?")) {
             query.setString(1, studentObject.getStudentName());
             query.setInt(2, studentObject.getStudentRollNo());
-            int rowsAffected = query.executeUpdate();
+            rowsAffected = query.executeUpdate();
             query.close();
-            return rowsAffected >= 1;
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
         } finally {
             connect.close();
         }
+        return rowsAffected >= 1;
     }
 
     @Override
@@ -154,17 +150,15 @@ class StudentDAO implements DatabaseOperations {
             throw new RuntimeException(e);
         }
 
-        try {
-            PreparedStatement query = connect.prepareStatement("DELETE FROM student_info WHERE stud_roll = ?");
+
+        int rowsAffected;
+        try (PreparedStatement query = connect.prepareStatement("DELETE FROM student_info WHERE stud_roll = ?")) {
             query.setInt(1, studentObject.getStudentRollNo());
-            int rowsAffected = query.executeUpdate();
-            query.close();
-            return rowsAffected >= 1;
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+            rowsAffected = query.executeUpdate();
         } finally {
             connect.close();
         }
+        return rowsAffected >= 1;
     }
 
     @Override
@@ -185,7 +179,7 @@ class StudentDAO implements DatabaseOperations {
                 System.out.println("\n");
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         } finally {
             assert result != null;
             result.close();
@@ -218,21 +212,15 @@ class Student { //POJO class
 
 class ManageDatabaseConnection {
 
-    Connection connect;
-
-    public Connection getConnection() {
+    public Connection getConnection() throws SQLException {
 
         String URL = "jdbc:mysql://localhost:3306/student";
         String username = "root";
         String password = "";
 
-        try {
-            connect = DriverManager.getConnection(URL, username, password);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+        try (Connection connect = DriverManager.getConnection(URL, username, password)) {
+            return connect;
         }
-
-        return connect;
     }
 }
 
@@ -240,9 +228,15 @@ public class DAOPattern {
 
     public static void main(String[] args) {
 
-        DatabaseOperations object = new StudentDAO(new ManageDatabaseConnection().getConnection());
+        DatabaseOperations object = null;
+        try {
+            object = new StudentDAO(new ManageDatabaseConnection().getConnection());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
         try {
+            assert object != null;
             object.startProgram();
         } catch (Exception e) {
             e.printStackTrace();
