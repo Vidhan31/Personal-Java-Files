@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.*;
 
-interface CRUDOperations {
+interface DatabaseOperations {
 
     void startProgram() throws Exception;
 
@@ -20,7 +20,7 @@ interface CRUDOperations {
     void displayStudentData() throws Exception;
 }
 
-class StudentDAO implements CRUDOperations {
+class StudentDAO implements DatabaseOperations {
 
     Connection connect;
 
@@ -240,18 +240,12 @@ public class DAOPattern {
 
     public static void main(String[] args) {
 
-        CRUDOperations object;
-
-        try {
-            object = new StudentDAO(new ManageDatabaseConnection().getConnection());
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        DatabaseOperations object = new StudentDAO(new ManageDatabaseConnection().getConnection());
 
         try {
             object.startProgram();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
     }
 }
