@@ -38,8 +38,10 @@ class StudentDAO implements DatabaseOperations {
 
         try {
             choice = Integer.parseInt(input.readLine());
-        } catch (IOException e) {
+        } catch (NumberFormatException e) {
             throw new RuntimeException(e);
+        } finally {
+            input.close();
         }
 
         switch (choice) {
@@ -86,8 +88,6 @@ class StudentDAO implements DatabaseOperations {
                 System.out.println("Invalid choice. Try again...");
                 break;
         }
-
-        input.close();
     }
 
     @Override
