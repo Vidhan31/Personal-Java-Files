@@ -3,6 +3,7 @@ package jdbc.apache;//Usage of wrapper class Integer, Double, etc makes sense be
 //query. This way you can manipulate that object's data.
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.*;
 
@@ -112,9 +113,10 @@ class StudentDAO implements DatabaseOperations {
             e.printStackTrace();
         }
 
+        String updateQuery = "UPDATE student_info SET stud_name = ? WHERE stud_roll = ?";
         int rowsAffected = 0;
         try (Connection connection = connect = ConnectionPool.getDataSource().getConnection()) {
-            try (PreparedStatement query = connect.prepareStatement("UPDATE student_info SET stud_name = ? WHERE stud_roll = ?")) {
+            try (PreparedStatement query = connect.prepareStatement(updateQuery, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE)) {
                 query.setString(1, studentObject.getStudentName());
                 query.setInt(2, studentObject.getStudentRollNo());
                 rowsAffected = query.executeUpdate();
@@ -135,9 +137,10 @@ class StudentDAO implements DatabaseOperations {
             e.printStackTrace();
         }
 
+        String deleteQuery = "DELETE FROM student_info WHERE stud_roll = ?";
         int rowsAffected = 0;
         try (Connection connection = connect = ConnectionPool.getDataSource().getConnection()) {
-            try (PreparedStatement query = connect.prepareStatement("DELETE FROM student_info WHERE stud_roll = ?")) {
+            try (PreparedStatement query = connect.prepareStatement(deleteQuery, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
                 query.setInt(1, studentObject.getStudentRollNo());
                 rowsAffected = query.executeUpdate();
             }
@@ -151,13 +154,14 @@ class StudentDAO implements DatabaseOperations {
     public void displayStudentData() throws Exception {
 
         try (Connection connection = connect = ConnectionPool.getDataSource().getConnection()) {
-            try (PreparedStatement query = connect.prepareStatement("SELECT * FROM student_info")) {
-                ResultSet result = query.executeQuery();
-                while (result.next()) {
-                    System.out.print(result.getInt("stud_roll") + " " + result.getString("stud_name"));
-                    System.out.println("\n");
+            try (PreparedStatement query = connect.prepareStatement("SELECT * FROM student_info", ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
+                try (ResultSet result = query.executeQuery()) {
+                    result.afterLast(); //basically points to row after last row. Without this it will point to row before first row.
+                    while (result.previous()) {
+                        System.out.print(result.getInt("stud_roll") + " " + result.getString("stud_name"));
+                        System.out.println("\n");
+                    }
                 }
-                System.out.println("Connection : " + connect.toString());
             }
         } catch (SQLException e) {
             e.printStackTrace();
