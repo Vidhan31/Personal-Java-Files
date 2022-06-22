@@ -1,9 +1,8 @@
-package jdbc;//Usage of wrapper class Integer, Double, etc makes sense because they can store NULL which is required.
+package jdbc.basic;//Usage of wrapper class Integer, Double, etc makes sense because they can store NULL which is required.
 //Create a new instance or pass values to constructor for SQL queries when you want to do more than just executing a
 //query. This way you can manipulate that object's data.
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.*;
 

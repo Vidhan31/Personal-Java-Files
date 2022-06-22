@@ -1,4 +1,4 @@
-package jdbc;// First download official mysql connector and then set jar file path in environment variable then import it here.
+package jdbc.basic;// First download official mysql connector and then set jar file path in environment variable then import it here.
 
 import java.io.BufferedReader;
 import java.io.IOException;
