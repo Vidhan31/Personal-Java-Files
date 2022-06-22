@@ -14,7 +14,7 @@ public class ConnectionPool {
     static {
         try {
             Properties property = new Properties();
-            property.load(new FileInputStream("src/database.properties"));
+            property.load(new FileInputStream("src/jdbc/apache/database.properties"));
             dataSource = new BasicDataSource();
             dataSource.setUrl(property.getProperty("DB_URL"));
             dataSource.setUsername(property.getProperty("DB_USERNAME"));
