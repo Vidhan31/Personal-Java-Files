@@ -3,7 +3,6 @@ package jdbc.apache;//Usage of wrapper class Integer, Double, etc makes sense be
 //query. This way you can manipulate that object's data.
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.*;
 
@@ -11,11 +10,11 @@ interface DatabaseOperations {
 
     void startProgram() throws Exception;
 
-    boolean insertStudentData(Student studentObject) throws Exception;
+    boolean insertStudentData() throws Exception;
 
-    boolean updateStudentData(Student studentObject) throws Exception;
+    boolean updateStudentData() throws Exception;
 
-    boolean deleteStudentData(Student studentObject) throws Exception;
+    boolean deleteStudentData() throws Exception;
 
     void displayStudentData() throws Exception;
 }
@@ -24,12 +23,13 @@ class StudentDAO implements DatabaseOperations {
 
     Connection connect = null;
 
+    @SuppressWarnings("unused")
     public void startProgram() throws Exception {
 
         BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
         int choice = 0;
 
-        while (choice != 5) {
+        do {
 
             System.out.println("Operations");
             System.out.println("1. Insert \n2. Display \n3. Update \n4. Delete \n5. Exit");
@@ -44,7 +44,7 @@ class StudentDAO implements DatabaseOperations {
             switch (choice) {
 
                 case 1:
-                    if (this.insertStudentData(new Student())) {
+                    if (this.insertStudentData()) {
                         System.out.println("Inserted data successfully.");
                     }
                     break;
@@ -54,13 +54,13 @@ class StudentDAO implements DatabaseOperations {
                     break;
 
                 case 3:
-                    if (this.updateStudentData(new Student())) {
+                    if (this.updateStudentData()) {
                         System.out.println("Updated data successfully.");
                     }
                     break;
 
                 case 4:
-                    if (this.deleteStudentData(new Student())) {
+                    if (this.deleteStudentData()) {
                         System.out.println("Deleted data successfully.");
                     }
                     break;
@@ -72,17 +72,22 @@ class StudentDAO implements DatabaseOperations {
                     System.out.println("Invalid choice. Try again...");
                     break;
             }
-        }
+        } while (choice != 5);
     }
 
-    @Override
-    public boolean insertStudentData(Student studentObject) throws Exception {
+    @Override @SuppressWarnings("unused")
+    public boolean insertStudentData() throws Exception {
+
+        String studentName = null;
+        Integer studentRollNo = null;
+        Student studentObject = null;
 
         try (BufferedReader input = new BufferedReader(new InputStreamReader(System.in))) {
             System.out.println("Enter student name : ");
-            studentObject.setStudentName(input.readLine());
+            studentName = input.readLine();
             System.out.println("Enter student roll number : ");
-            studentObject.setStudentRollNo(Integer.parseInt(input.readLine()));
+            studentRollNo = Integer.parseInt(input.readLine());
+            studentObject = new Student(studentName, studentRollNo);
         } catch (NumberFormatException e) {
             e.printStackTrace();
         }
@@ -91,8 +96,8 @@ class StudentDAO implements DatabaseOperations {
         int rowsAffected = 0;
         try (Connection connection = connect = ConnectionPool.getDataSource().getConnection()) {
             try (PreparedStatement pst = connect.prepareStatement(insertQuery, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
-                pst.setString(1, studentObject.getStudentName());
-                pst.setInt(2, studentObject.getStudentRollNo());
+                pst.setString(1, studentName);
+                pst.setInt(2, studentRollNo);
                 rowsAffected = pst.executeUpdate();
             }
         } catch (Exception e) {
@@ -101,14 +106,19 @@ class StudentDAO implements DatabaseOperations {
         return rowsAffected >= 1;
     }
 
-    @Override
-    public boolean updateStudentData(Student studentObject) throws Exception {
+    @Override @SuppressWarnings("unused")
+    public boolean updateStudentData() throws Exception {
+
+        String studentName = null;
+        Integer studentRollNo = null;
+        Student studentObject = null;
 
         try (BufferedReader input = new BufferedReader(new InputStreamReader(System.in))) {
             System.out.println("Enter student name : ");
-            studentObject.setStudentName(input.readLine());
-            System.out.println("Enter student roll number :");
-            studentObject.setStudentRollNo(Integer.parseInt(input.readLine()));
+            studentName = input.readLine();
+            System.out.println("Enter student roll number : ");
+            studentRollNo = Integer.parseInt(input.readLine());
+            studentObject = new Student(studentName, studentRollNo);
         } catch (NumberFormatException e) {
             e.printStackTrace();
         }
@@ -117,8 +127,8 @@ class StudentDAO implements DatabaseOperations {
         int rowsAffected = 0;
         try (Connection connection = connect = ConnectionPool.getDataSource().getConnection()) {
             try (PreparedStatement query = connect.prepareStatement(updateQuery, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE)) {
-                query.setString(1, studentObject.getStudentName());
-                query.setInt(2, studentObject.getStudentRollNo());
+                query.setString(1, studentName);
+                query.setInt(2, studentRollNo);
                 rowsAffected = query.executeUpdate();
             }
         } catch (Exception e) {
@@ -127,12 +137,16 @@ class StudentDAO implements DatabaseOperations {
         return rowsAffected >= 1;
     }
 
-    @Override
-    public boolean deleteStudentData(Student studentObject) throws Exception {
+    @Override @SuppressWarnings("unused")
+    public boolean deleteStudentData() throws Exception {
+
+        Integer studentRollNo = null;
+        Student studentObject = null;
 
         try (BufferedReader input = new BufferedReader(new InputStreamReader(System.in))) {
             System.out.println("Enter student roll number : ");
-            studentObject.setStudentRollNo(Integer.parseInt(input.readLine()));
+            studentRollNo = Integer.parseInt(input.readLine());
+            studentObject = new Student(studentRollNo);
         } catch (NumberFormatException e) {
             e.printStackTrace();
         }
@@ -141,7 +155,7 @@ class StudentDAO implements DatabaseOperations {
         int rowsAffected = 0;
         try (Connection connection = connect = ConnectionPool.getDataSource().getConnection()) {
             try (PreparedStatement query = connect.prepareStatement(deleteQuery, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
-                query.setInt(1, studentObject.getStudentRollNo());
+                query.setInt(1, studentRollNo);
                 rowsAffected = query.executeUpdate();
             }
         } catch (Exception e) {
@@ -150,7 +164,7 @@ class StudentDAO implements DatabaseOperations {
         return rowsAffected >= 1;
     }
 
-    @Override
+    @Override @SuppressWarnings("unused")
     public void displayStudentData() throws Exception {
 
         try (Connection connection = connect = ConnectionPool.getDataSource().getConnection()) {
