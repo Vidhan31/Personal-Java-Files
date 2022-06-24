@@ -28,14 +28,12 @@ class StudentDAO implements DatabaseOperations {
 
         int choice = 0;
 
-        BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
-
-        while (choice != 5) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
 
             System.out.println("Operations");
             System.out.println("1. Insert \n2. Display \n3. Update \n4. Delete \n5. Exit");
             System.out.println("Enter your choice : ");
-            choice = Integer.parseInt(input.readLine());
+            choice = Integer.parseInt(reader.readLine());
 
             switch (choice) {
 
@@ -91,9 +89,7 @@ class StudentDAO implements DatabaseOperations {
         String insertQuery = "INSERT INTO student_info VALUES (?,?, NULL)";
         int rowsAffected = 0;
         try (Connection connection = connect = ConnectionPool.getDataSource().getConnection()) {
-            try (PreparedStatement pst = connect.prepareStatement(insertQuery,
-                    ResultSet.TYPE_SCROLL_SENSITIVE,
-                    ResultSet.CONCUR_READ_ONLY)) {
+            try (PreparedStatement pst = connect.prepareStatement(insertQuery, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
                 pst.setString(1, studentObject.getStudentName());
                 pst.setInt(2, studentObject.getStudentRollNo());
                 rowsAffected = pst.executeUpdate();
