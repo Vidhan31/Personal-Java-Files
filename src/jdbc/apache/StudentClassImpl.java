@@ -26,20 +26,16 @@ class StudentDAO implements DatabaseOperations {
     @Override
     public void startProgram() throws Exception {
 
-        BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
-        int choice;
+        int choice = 0;
 
-        do {
+        BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
+
+        while (choice != 5) {
 
             System.out.println("Operations");
             System.out.println("1. Insert \n2. Display \n3. Update \n4. Delete \n5. Exit");
             System.out.println("Enter your choice : ");
-
-            try {
-                choice = Integer.parseInt(input.readLine());
-            } catch (NumberFormatException e) {
-                throw new RuntimeException(e);
-            }
+            choice = Integer.parseInt(input.readLine());
 
             switch (choice) {
 
@@ -72,7 +68,7 @@ class StudentDAO implements DatabaseOperations {
                     System.out.println("Invalid choice. Try again...");
                     break;
             }
-        } while (true);
+        }
     }
 
     @Override
@@ -95,9 +91,11 @@ class StudentDAO implements DatabaseOperations {
         String insertQuery = "INSERT INTO student_info VALUES (?,?, NULL)";
         int rowsAffected = 0;
         try (Connection connection = connect = ConnectionPool.getDataSource().getConnection()) {
-            try (PreparedStatement pst = connect.prepareStatement(insertQuery, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
-                pst.setString(1, studentName);
-                pst.setInt(2, studentRollNo);
+            try (PreparedStatement pst = connect.prepareStatement(insertQuery,
+                    ResultSet.TYPE_SCROLL_SENSITIVE,
+                    ResultSet.CONCUR_READ_ONLY)) {
+                pst.setString(1, studentObject.getStudentName());
+                pst.setInt(2, studentObject.getStudentRollNo());
                 rowsAffected = pst.executeUpdate();
             }
         } catch (Exception e) {
@@ -127,8 +125,8 @@ class StudentDAO implements DatabaseOperations {
         int rowsAffected = 0;
         try (Connection connection = connect = ConnectionPool.getDataSource().getConnection()) {
             try (PreparedStatement query = connect.prepareStatement(updateQuery, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE)) {
-                query.setString(1, studentName);
-                query.setInt(2, studentRollNo);
+                query.setString(1, studentObject.getStudentName());
+                query.setInt(2, studentObject.getStudentRollNo());
                 rowsAffected = query.executeUpdate();
             }
         } catch (Exception e) {
@@ -141,12 +139,10 @@ class StudentDAO implements DatabaseOperations {
     public boolean deleteStudentData() throws Exception {
 
         Integer studentRollNo = null;
-        Student studentObject = null;
 
         try (BufferedReader input = new BufferedReader(new InputStreamReader(System.in))) {
             System.out.println("Enter student roll number : ");
             studentRollNo = Integer.parseInt(input.readLine());
-            studentObject = new Student(studentRollNo);
         } catch (NumberFormatException e) {
             e.printStackTrace();
         }
@@ -175,6 +171,7 @@ class StudentDAO implements DatabaseOperations {
                         System.out.print(result.getInt("stud_roll") + " " + result.getString("stud_name"));
                         System.out.println("\n");
                     }
+                    System.out.println("Connect = " + connect.toString());
                 }
             }
         } catch (SQLException e) {

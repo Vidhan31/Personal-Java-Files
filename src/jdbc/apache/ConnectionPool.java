@@ -26,8 +26,8 @@ public class ConnectionPool {
             dataSource.setUrl(property.getProperty("DB_URL"));
             dataSource.setUsername(property.getProperty("DB_USERNAME"));
             dataSource.setPassword(property.getProperty("DB_PASSWORD"));
-            dataSource.setMaxTotal(4);
-            dataSource.setMaxOpenPreparedStatements(5);
+            dataSource.setMaxTotal(2);
+            dataSource.setMaxOpenPreparedStatements(2);
         } catch (Exception e) {
             e.printStackTrace();
         }

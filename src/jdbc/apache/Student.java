@@ -22,16 +22,7 @@ public class Student {
         return studentName;
     }
 
-    public void setStudentName(String studentName) {
-        this.studentName = studentName;
-    }
-
     public Integer getStudentRollNo() {
         return studentRollNo;
-    }
-
-    public void setStudentRollNo(Integer studentRollNo) {
-        this.studentRollNo = studentRollNo;
-
     }
 }
