@@ -10,6 +10,8 @@ public class ConnectionPool {
 
     private static BasicDataSource dataSource = null;
 
+    private ConnectionPool() {}
+
     synchronized public static DataSource getDataSource() throws Exception {
 
         try {
