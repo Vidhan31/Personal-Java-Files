@@ -4,14 +4,13 @@ import org.apache.commons.dbcp2.BasicDataSource;
 
 import javax.sql.DataSource;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.Properties;
 
 public class ConnectionPool {
 
     private static BasicDataSource dataSource = null;
 
-    synchronized public static DataSource getDataSource() {
+    synchronized public static DataSource getDataSource() throws Exception {
 
         try {
             Properties property = new Properties();
@@ -27,7 +26,7 @@ public class ConnectionPool {
             dataSource.setPassword(property.getProperty("DB_PASSWORD"));
             dataSource.setMaxTotal(4);
             dataSource.setMaxOpenPreparedStatements(5);
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return dataSource;
