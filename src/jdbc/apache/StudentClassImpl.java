@@ -23,11 +23,11 @@ class StudentDAO implements DatabaseOperations {
 
     Connection connect = null;
 
-    @SuppressWarnings("unused")
+    @Override
     public void startProgram() throws Exception {
 
         BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
-        int choice = 0;
+        int choice;
 
         do {
 
@@ -72,10 +72,10 @@ class StudentDAO implements DatabaseOperations {
                     System.out.println("Invalid choice. Try again...");
                     break;
             }
-        } while (choice != 5);
+        } while (true);
     }
 
-    @Override @SuppressWarnings("unused")
+    @Override
     public boolean insertStudentData() throws Exception {
 
         String studentName = null;
@@ -106,7 +106,7 @@ class StudentDAO implements DatabaseOperations {
         return rowsAffected >= 1;
     }
 
-    @Override @SuppressWarnings("unused")
+    @Override
     public boolean updateStudentData() throws Exception {
 
         String studentName = null;
@@ -137,7 +137,7 @@ class StudentDAO implements DatabaseOperations {
         return rowsAffected >= 1;
     }
 
-    @Override @SuppressWarnings("unused")
+    @Override
     public boolean deleteStudentData() throws Exception {
 
         Integer studentRollNo = null;
@@ -164,7 +164,7 @@ class StudentDAO implements DatabaseOperations {
         return rowsAffected >= 1;
     }
 
-    @Override @SuppressWarnings("unused")
+    @Override
     public void displayStudentData() throws Exception {
 
         try (Connection connection = connect = ConnectionPool.getDataSource().getConnection()) {

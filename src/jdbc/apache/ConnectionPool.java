@@ -11,23 +11,25 @@ public class ConnectionPool {
 
     private static BasicDataSource dataSource = null;
 
-    static {
+    synchronized public static DataSource getDataSource() {
+
         try {
             Properties property = new Properties();
             property.load(new FileInputStream("src/jdbc/apache/database.properties"));
-            dataSource = new BasicDataSource();
+
+            if (dataSource == null) {
+                System.out.println("new instance of datasource");
+                dataSource = new BasicDataSource();
+            }
+
             dataSource.setUrl(property.getProperty("DB_URL"));
             dataSource.setUsername(property.getProperty("DB_USERNAME"));
             dataSource.setPassword(property.getProperty("DB_PASSWORD"));
+            dataSource.setMaxTotal(4);
+            dataSource.setMaxOpenPreparedStatements(5);
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        dataSource.setMaxTotal(4);
-        dataSource.setMaxOpenPreparedStatements(5);
-    }
-
-    public static DataSource getDataSource() {
         return dataSource;
     }
 }
