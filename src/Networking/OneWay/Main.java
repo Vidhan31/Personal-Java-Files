@@ -1,5 +1,6 @@
 package Networking.OneWay;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -14,8 +15,9 @@ public class Main {
         String sample = "Vidhan";
         try (Socket socket = new Socket(IP, port)) {
             try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(socket.getOutputStream())) {
-                PrintWriter printWriter = new PrintWriter(outputStreamWriter);
-                printWriter.write(sample);
+                try (BufferedWriter bufferedWriter = new BufferedWriter(outputStreamWriter)) {
+                    bufferedWriter.write(sample);
+                }
             }
         }
     }
