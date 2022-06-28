@@ -1,4 +1,4 @@
-package Networking.TwoWay;
+package Networking.TCP.TwoWay;
 
 import java.io.BufferedReader;
 import java.io.IOException;

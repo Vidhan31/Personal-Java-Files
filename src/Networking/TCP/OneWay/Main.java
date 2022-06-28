@@ -1,4 +1,4 @@
-package Networking.OneWay;
+package Networking.TCP.OneWay;
 
 import java.io.*;
 import java.net.ServerSocket;
