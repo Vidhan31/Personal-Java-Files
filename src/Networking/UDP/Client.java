@@ -11,18 +11,15 @@ public class Client {
         try (DatagramSocket datagramSocket = new DatagramSocket()) {
 
             datagramSocket.setReuseAddress(true);
-            String sample = "viddd";
+            String sample = "hello";
             InetAddress address = InetAddress.getLocalHost();
-
-            DatagramPacket packet = new DatagramPacket(sample.getBytes(), sample.length(), address, datagramSocket.getLocalPort());
+            DatagramPacket packet = new DatagramPacket(sample.getBytes(), sample.length(), address, 9999);
             datagramSocket.send(packet);
-        }
 
-        try (DatagramSocket datagramSocket = new DatagramSocket()) {
             byte[] buffer = new byte[1024];
             DatagramPacket datagramPacket = new DatagramPacket(buffer, buffer.length);
             datagramSocket.receive(datagramPacket);
-            String message = new String(datagramPacket.getData(), 0, datagramPacket.getLength()).toLowerCase();
+            String message = new String(datagramPacket.getData(), 0, datagramPacket.getLength());
             System.out.println(message);
         }
     }
