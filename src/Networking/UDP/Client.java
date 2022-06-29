@@ -19,6 +19,7 @@ public class Client {
 
     public static void main(String[] args) throws Exception {
 
+        //DatagramSockets are used to send/receive datagram packets where datapackets are used to send and receive data.
         try (DatagramSocket datagramSocket = new DatagramSocket()) {
             InetAddress address = InetAddress.getLocalHost();
             Client client = new Client(datagramSocket, address);
@@ -33,6 +34,8 @@ public class Client {
             try {
                 System.out.println("[Client] Input : ");
                 buffer = scanner.nextLine().getBytes();
+
+                //address and port for the destination we need to send the data.
                 DatagramPacket datagramPacket = new DatagramPacket(buffer, buffer.length, inetAddress, 9999);
                 datagramSocket.send(datagramPacket);
                 datagramSocket.receive(datagramPacket);
