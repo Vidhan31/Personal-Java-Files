@@ -3,26 +3,43 @@ package Networking.UDP;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.util.Scanner;
 
 public class Server {
 
+    private DatagramSocket datagramSocket;
+    private InetAddress address;
+    private byte[] buffer = new byte[1024];
+
+    public Server(DatagramSocket datagramSocket) {
+        this.datagramSocket = datagramSocket;
+    }
+
     public static void main(String[] args) throws Exception {
 
-        String message;
+        try (DatagramSocket datagramSocket = new DatagramSocket(9999)) {
+            Server server = new Server(datagramSocket);
+            server.ServerSide();
+        }
+    }
 
-        try (DatagramSocket socket = new DatagramSocket(9999)) {
+    public void ServerSide() throws Exception {
 
-            socket.setReuseAddress(true);
-            byte[] buffer = new byte[1024];
-            DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
-            socket.receive(packet);
-            message = new String(packet.getData(), 0, packet.getLength());
-            System.out.println(message);
-            String modified = message.toUpperCase();
+        while (true) {
 
-            InetAddress address = InetAddress.getLocalHost();
-            DatagramPacket datagramPacket = new DatagramPacket(modified.getBytes(), modified.length(), address, packet.getPort());
-            socket.send(datagramPacket);
+            try {
+                DatagramPacket datagramPacket = new DatagramPacket(buffer, buffer.length, address, 9999);
+                datagramSocket.receive(datagramPacket);
+                String message = new String(datagramPacket.getData(), 0, buffer.length);
+                System.out.println("[Server] Client says : " + message);
+
+                buffer = message.toUpperCase().getBytes();
+                datagramPacket = new DatagramPacket(buffer, buffer.length, datagramPacket.getAddress(), datagramPacket.getPort());
+                datagramSocket.send(datagramPacket);
+            } catch (Exception e) {
+                e.printStackTrace();
+                break;
+            }
         }
     }
 }

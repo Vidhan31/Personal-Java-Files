@@ -3,24 +3,45 @@ package Networking.UDP;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.util.Scanner;
 
 public class Client {
+
+    private DatagramSocket datagramSocket;
+    private InetAddress inetAddress;
+    byte[] buffer = new byte[1024];
+
+    public Client(DatagramSocket datagramSocket, InetAddress inetAddress) {
+
+        this.datagramSocket = datagramSocket;
+        this.inetAddress = inetAddress;
+    }
 
     public static void main(String[] args) throws Exception {
 
         try (DatagramSocket datagramSocket = new DatagramSocket()) {
-
-            datagramSocket.setReuseAddress(true);
-            String sample = "hello";
             InetAddress address = InetAddress.getLocalHost();
-            DatagramPacket packet = new DatagramPacket(sample.getBytes(), sample.length(), address, 9999);
-            datagramSocket.send(packet);
+            Client client = new Client(datagramSocket, address);
+            client.ClientSide();
+        }
+    }
 
-            byte[] buffer = new byte[1024];
-            DatagramPacket datagramPacket = new DatagramPacket(buffer, buffer.length);
-            datagramSocket.receive(datagramPacket);
-            String message = new String(datagramPacket.getData(), 0, datagramPacket.getLength());
-            System.out.println(message);
+    public void ClientSide() throws Exception {
+
+        Scanner scanner = new Scanner(System.in);
+        while (true) {
+            try {
+                System.out.println("[Client] Input : ");
+                buffer = scanner.nextLine().getBytes();
+                DatagramPacket datagramPacket = new DatagramPacket(buffer, buffer.length, inetAddress, 9999);
+                datagramSocket.send(datagramPacket);
+                datagramSocket.receive(datagramPacket);
+                String message = new String(datagramPacket.getData(), 0, buffer.length);
+                System.out.println("[Client] Server says : " + message);
+            } catch (Exception e) {
+                e.printStackTrace();
+                break;
+            }
         }
     }
 }
