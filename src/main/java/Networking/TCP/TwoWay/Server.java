@@ -23,6 +23,8 @@ public class Server {
             try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(socket.getOutputStream())) {
                 try (BufferedWriter bufferedWriter = new BufferedWriter(outputStreamWriter)) {
                     bufferedWriter.write(sample);
+                    outputStreamWriter.flush();
+                    bufferedWriter.flush();
                 }
             }
         }

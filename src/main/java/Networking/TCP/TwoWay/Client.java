@@ -9,10 +9,7 @@ public class Client {
 
     public static void main(String[] args) throws IOException {
 
-        String IP = "localhost";
-        int port = 9999;
-
-        try (Socket socket = new Socket(IP, port)) {
+        try (Socket socket = new Socket("localhost", 9999)) {
             try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
                 System.out.println("Server Data : " + bufferedReader.readLine());
             }
